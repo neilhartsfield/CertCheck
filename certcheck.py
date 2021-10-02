@@ -6,6 +6,7 @@ from art import *
 
 #Print Cert Check title
 tprint("Cert Check")
+print("Author: Neil Hartsfield (Neil_Hartsfield@McAfee.com)\n")
 
 # Define argument position (for MER's file path) & define certificate blobs 
 path = sys.argv[1]
@@ -41,6 +42,7 @@ if os.path.exists(path):
 # Create temp file and extract MER contents to it
 tmp = tempfile.TemporaryDirectory()
 print("Temporary directory created at:", tmp.name)
+print("\n")
 shutil.unpack_archive(path, tmp.name)
 
 # Join PS_DIR_CERT with temp file directory structure
@@ -57,5 +59,5 @@ for item in blobs:
         print("*****MISSING*****: {}".format(blobs[item]))
 
 file1.close()
-
-print("Cleaning up temp files:", tmp.name)
+print("\n\nCleaning up temp files:", tmp.name)
+print("Thank you for using Cert Check!")

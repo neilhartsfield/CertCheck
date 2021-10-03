@@ -4,11 +4,11 @@ import os, sys
 from pathlib import Path
 from art import *
 
-#Print Cert Check title
-tprint("Cert Check")
-print("Author: Neil Hartsfield (Neil_Hartsfield@McAfee.com)\n")
+# Print Cert Check title
+tprint('Cert Check')
+print('Author: Neil Hartsfield (Neil_Hartsfield@McAfee.com)\n')
 
-# Define argument position (for MER's file path) & define certificate blobs 
+# Define argument position (for MER's file path) & define certificate blob dictionary 
 path = sys.argv[1]
 blobs = {
     '02FAF3E291435468607857694DF5E45B68851868': 'AddTrust External CA Root (2020)',
@@ -37,27 +37,22 @@ blobs = {
 
 # Check if path exits
 if os.path.exists(path):
-    print("Target MER file", path, "exists.")
+    print('Target MER file', path, 'exists.')
 
 # Create temp file and extract MER contents to it
-tmp = tempfile.TemporaryDirectory()
-print("Temporary directory created at:", tmp.name)
-print("\n")
-shutil.unpack_archive(path, tmp.name)
-
-# Join PS_DIR_CERT with temp file directory structure
-cert_text = os.path.join(tmp.name, "0", "CMD_PS_DIR_CERT.txt")
-
 # Open CMD_PS_DIR_CERT, compare with blobs, report those found/missing
-file1 = open(cert_text, "r")
-readfile = file1.read()
-
+# Join PS_DIR_CERT with temp file directory structure
+with tempfile.TemporaryDirectory() as tmp:
+     print('Created temporary directory:', tmp, '\n')
+     shutil.unpack_archive(path, tmp)
+     cert_text = os.path.join(tmp, '0', 'CMD_PS_DIR_CERT.txt')
+     with open(cert_text) as fd:
+        contents = fd.read()
 for item in blobs:
-    if item in readfile:
-        print("Certificate found: {}".format(blobs[item]))
+    if item in contents:
+        print('Certificate found: {}'.format(blobs[item]))
     else:
-        print("*****MISSING*****: {}".format(blobs[item]))
-
-file1.close()
-print("\n\nCleaning up temp files:", tmp.name)
-print("Thank you for using Cert Check!")
+        print('*****MISSING*****: {}'.format(blobs[item]))
+        
+print('\n\nCleaning up temp files:', tmp)
+print('Thank you for using Cert Check!')

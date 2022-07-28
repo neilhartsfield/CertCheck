@@ -6,7 +6,8 @@ from art import *
 
 # Print Cert Check title
 tprint('Cert Check')
-print('Author: Neil Hartsfield (Neil_Hartsfield@McAfee.com)\n')
+print('Author: Neil Hartsfield (Neil.Hartsfield@Trellix.com)')
+print('Updated on 07/28/2022 with Juan Sanchez (Juan.SanchezCalvo@Trellix.com)\n')
 
 # Define argument position (for MER's file path) & define certificate blob dictionary 
 path = sys.argv[1]
@@ -42,20 +43,30 @@ blobs = {
 if os.path.exists(path):
     print('Target MER file', path, 'exists.')
 
+# Get file name
+if os.path.exists(path):
+    file_name = os.path.basename(path)
+
 # Create temp file and extract MER contents to it
 # Open CMD_PS_DIR_CERT, compare with blobs, report those found/missing
 # Join PS_DIR_CERT with temp file directory structure
 with tempfile.TemporaryDirectory() as tmp:
-     print('Created temporary directory:', tmp, '\n')
+     print('Creating temporary directory:', tmp)
      shutil.unpack_archive(path, tmp)
-     cert_text = os.path.join(tmp, '0', 'CMD_PS_DIR_CERT.txt')
-     with open(cert_text,encoding="ANSI") as fd:
-        contents = fd.read()
+     d = tmp
+     for path in os.listdir(d):
+        full_path = os.path.join(d, path)
+        if os.path.isdir(full_path):
+            print('Directory structure of MER: ', full_path, '\n')
+            cert_text = os.path.join(full_path, 'CMD_PS_DIR_CERT.txt')
+            with open(cert_text,encoding="ANSI") as fd:
+               contents = fd.read()
+
 for item in blobs:
     if item in contents:
         print('Certificate found: {}'.format(blobs[item]))
     else:
         print('*****MISSING*****: {}'.format(blobs[item]))
         
-print('\n\nCleaning up temp files:', tmp)
+print('\nCleaning up temp files:', tmp)
 print('Thank you for using Cert Check!')

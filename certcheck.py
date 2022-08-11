@@ -6,8 +6,10 @@ from art import *
 
 # Print Cert Check title
 tprint('Cert Check')
+print('Version 2.1')
+print('Last updated: 08/11/2022')
 print('Author: Neil Hartsfield (Neil.Hartsfield@Trellix.com)')
-print('Updated on 07/28/2022 with Juan Sanchez (Juan.SanchezCalvo@Trellix.com)\n')
+print('Additional contributors: Juan Sanchez (Juan.SanchezCalvo@Trellix.com)\n')
 
 # Define argument position (for MER's file path) & define certificate blob dictionary 
 path = sys.argv[1]
@@ -58,7 +60,10 @@ with tempfile.TemporaryDirectory() as tmp:
         full_path = os.path.join(d, path)
         if os.path.isdir(full_path):
             print('Directory structure of MER: ', full_path, '\n')
-            cert_text = os.path.join(full_path, 'CMD_PS_DIR_CERT.txt')
+            if os.path.exists(os.path.join(full_path, 'CMD_PS_DIR_CERT.txt')):
+                cert_text = os.path.join(full_path, 'CMD_PS_DIR_CERT.txt')
+            else:
+                cert_text = os.path.join(full_path, 'CMD_FILE_CERTIFICATES.txt')
             with open(cert_text,encoding="ANSI") as fd:
                contents = fd.read()
 
